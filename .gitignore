@@ -1,0 +1,8 @@
+.*/
+build/
+out/
+logs/
+*.imp
+*.ipr
+*.iws
+*.idea
