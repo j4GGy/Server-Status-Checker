@@ -5,8 +5,9 @@ import kotlinx.serialization.Serializable
 
 @KVService
 interface IStatusService {
-    suspend fun addUrl(url: String): Failable<String>
+    suspend fun addUrl(url: String): String
     suspend fun getStatusList(): List<Pair<String, ServerStatus>>
+    suspend fun removeUrl(url: String): String
 }
 
 @Serializable

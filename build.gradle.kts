@@ -103,6 +103,7 @@ kotlin {
                 implementation("io.kvision:kvision-chart:$kvisionVersion")
                 implementation("io.kvision:kvision-routing-navigo-ng:$kvisionVersion")
                 implementation("io.kvision:kvision-state:$kvisionVersion")
+                implementation("io.kvision:kvision-fontawesome:$kvisionVersion")
             }
         }
         val jsTest by getting {

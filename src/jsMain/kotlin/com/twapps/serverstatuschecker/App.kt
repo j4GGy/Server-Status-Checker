@@ -6,6 +6,7 @@ import io.kvision.BootstrapCssModule
 import io.kvision.BootstrapModule
 import io.kvision.ChartModule
 import io.kvision.CoreModule
+import io.kvision.FontAwesomeModule
 import io.kvision.ToastifyModule
 import io.kvision.module
 import io.kvision.panel.root
@@ -30,6 +31,7 @@ fun main() {
         module.hot,
         BootstrapModule,
         BootstrapCssModule,
+        FontAwesomeModule,
         ToastifyModule,
         ChartModule,
         CoreModule

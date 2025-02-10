@@ -10,6 +10,10 @@ object Model {
     }
 
     suspend fun addUrl(url: String): Failable<String> {
-        return tryOrFailFailable { statusService.addUrl(url) }
+        return tryOrFailSuspend { statusService.addUrl(url) }
+    }
+
+    suspend fun removeUrl(url: String): Failable<String> {
+        return tryOrFailSuspend { statusService.removeUrl(url) }
     }
 }

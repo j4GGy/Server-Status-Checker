@@ -1,14 +1,18 @@
 package com.twapps.serverstatuschecker
 
+import com.twapps.serverstatuschecker.Failable.Success.Companion.toSuccess
+import com.twapps.serverstatuschecker.MainPage.toOutput
 import io.kvision.core.AlignItems
 import io.kvision.core.Background
 import io.kvision.core.Color
 import io.kvision.core.Container
 import io.kvision.core.JustifyItems
+import io.kvision.core.onClick
 import io.kvision.form.formPanel
 import io.kvision.form.text.Text
 import io.kvision.html.button
 import io.kvision.html.div
+import io.kvision.html.icon
 import io.kvision.html.span
 import io.kvision.html.table
 import io.kvision.html.tbody
@@ -23,6 +27,8 @@ import io.kvision.state.sub
 import io.kvision.toast.Toast
 import io.kvision.utils.auto
 import io.kvision.utils.px
+import kotlinx.browser.window
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
@@ -75,7 +81,7 @@ object MainPage {
 
                 button("Refresh") {
                     onClick {
-                        updateStatus()
+                        updateAllStatuses()
                     }
                 }
             }
@@ -84,7 +90,7 @@ object MainPage {
                 when (statuses) {
                     null -> {
                         span("Loading...")
-                        updateStatus()
+                        updateAllStatuses()
                     }
 
                     is Failable.Failure -> span("Error: ${statuses.error}")
@@ -99,16 +105,31 @@ object MainPage {
             tr {
                 th { +"URL" }
                 th { +"Status" }
+                th {
+                    setAttribute("colspan", "2")
+                }
             }
         }
         tbody {
-            statuses.forEach {
+            statuses.forEach { (url, status) ->
                 tr {
                     td {
-                        +it.first
+                        +url
                     }
                     td {
-                        +it.second.toOutput()
+                        +status.toOutput()
+                    }
+                    td {
+                        icon("fas fa-copy") {
+                            role = "button"
+                            onClick { copyUrl(url) }
+                        }
+                    }
+                    td {
+                        icon("fas fa-trash-can") {
+                            role = "button"
+                            onClick { removeUrl(url) }
+                        }
                     }
                 }
             }
@@ -118,28 +139,63 @@ object MainPage {
 
     private fun addUrl(formInput: FormInput) {
         AppScope.launch {
-            val serverResponse = Model.addUrl(formInput.url)
+            val url = formInput.url
+            val serverResponse = Model.addUrl(url)
 
             if (serverResponse is Failable.Success) {
-                Toast.success(serverResponse.value)
-                updateStatus()
+                val addedUrl = serverResponse.value
+
+                Toast.success("Added $addedUrl")
+
+                (state.value.statuses as? Failable.Success)?.value?.let { statusesBefore ->
+                    val newStatuses = (statusesBefore + (addedUrl to ServerStatus(null, null, Response(200, "")))).toSuccess()
+                    state.value = state.value.copy(statuses = newStatuses)
+                }
+
+                delay(2_000)
+                updateAllStatuses()
             } else if (serverResponse is Failable.Failure){
                 Toast.danger(serverResponse.error ?: "Unknown error")
             }
         }
     }
-    private fun updateStatus() {
+
+    private fun updateAllStatuses() {
         AppScope.launch {
             val serverResponse = Model.getStatusList()
             state.value = state.value.copy(statuses = serverResponse)
         }
     }
 
-    private fun ServerStatus.toOutput(): String {
-        return when {
-            error != null -> "ERROR: $error"
-            response != null -> "OK: $response"
-            else -> "???"
+    private fun removeUrl(url: String) {
+        AppScope.launch {
+            val serverResponse = Model.removeUrl(url)
+
+            if (serverResponse is Failable.Success) {
+                (state.value.statuses as? Failable.Success)?.value?.let { statusesBefore ->
+                    val newStatuses = statusesBefore.filter { it.first != url }.toSuccess()
+                    state.value = state.value.copy(statuses = newStatuses)
+                }
+                Toast.success("${serverResponse.value} removed")
+            } else if (serverResponse is Failable.Failure){
+                Toast.danger(serverResponse.error ?: "Unknown error")
+            }
         }
     }
+
+    private fun copyUrl(url: String) {
+        window.navigator.clipboard.writeText(url)
+        Toast.success("Copied \"$url\" to clipboard")
+    }
+
+    private fun ServerStatus.toOutput(): String {
+        return when {
+            error != null -> "\uD83D\uDD34 $error"
+            isOk() -> "\uD83D\uDFE2 ${response?.toOutput()}"
+            response != null -> "\uD83D\uDFE0  ${response.toOutput()}"
+            else -> "\uD83D\uDFE0"
+        }
+    }
+
+    private fun Response.toOutput() = "$message ($code)"
 }
