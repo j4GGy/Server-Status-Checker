@@ -48,3 +48,12 @@ suspend fun <T: Any> tryOrFailFailable(block: suspend () -> Failable<T>): Failab
         exception.toFailure()
     }
 }
+
+suspend fun <T: Any> tryOrNull(block: suspend () -> T): T? {
+    return try {
+        block()
+    } catch (exception: Exception) {
+        exception.printStackTrace()
+        null
+    }
+}

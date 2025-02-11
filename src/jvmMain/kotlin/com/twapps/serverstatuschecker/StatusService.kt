@@ -5,8 +5,13 @@ actual class StatusService constructor(
     private val serverState: ServerState
 ) : IStatusService {
 
-    override suspend fun addUrl(url: String): String {
-        println("addUrl called with url=[$url]")
+    override suspend fun addUrl(url: String, addVariations: Boolean): String {
+        println("addUrl called with url=[$url], addVariations=[$addVariations]")
+        if (addVariations) {
+            val urls = createVariations(url)
+            urls.forEach { addUrl(it, false) }
+            return url
+        }
 
         val validUrl = makeUrlValid(url)
         if (serverState.urls.contains(validUrl)) {
@@ -15,8 +20,15 @@ actual class StatusService constructor(
         } else {
             println("Adding $validUrl")
             serverState.urls.add(validUrl)
-            serverState.checker.updateStatuses(serverState.urls, serverState.statuses)
+            serverState.checker.updateStatus(validUrl, serverState.statuses)
             return validUrl
+        }
+    }
+
+    override suspend fun addUrls(urls: List<String>, addVariations: Boolean): List<String> {
+        println("addUrls called with urls=[$urls]")
+        return urls.mapNotNull { url ->
+            tryOrNull { addUrl(url, addVariations) }
         }
     }
 
@@ -42,5 +54,14 @@ actual class StatusService constructor(
             return makeUrlValid("http://$url")
         }
         return url
+    }
+
+    private fun createVariations(url: String): List<String> {
+        val rootDomain = url.substringAfter("://").removePrefix("www.")
+
+        return listOf(
+            rootDomain,
+            "www.$rootDomain",
+        ).flatMap { listOf("http://$it", "https://$it") }
     }
 }
