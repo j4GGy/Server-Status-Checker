@@ -1,4 +1,7 @@
-package com.twapps.serverstatuschecker
+package com.twapps.serverstatuschecker.server
+
+import com.twapps.serverstatuschecker.services.StatusChecker
+import com.twapps.serverstatuschecker.services.ServerStatus
 
 class ServerState constructor(
     val urls: MutableList<String>,

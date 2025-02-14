@@ -1,5 +1,6 @@
-package com.twapps.serverstatuschecker
+package com.twapps.serverstatuschecker.services
 
+import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import kotlinx.coroutines.CoroutineScope
@@ -13,6 +14,10 @@ class StatusChecker constructor(
 
         private fun HttpStatusCode.toResponse() = Response(value, description)
         private fun Exception.toOutputString() = this::class.simpleName + ": " + message
+    }
+
+    private val httpClient = HttpClient {
+        // extra config here
     }
 
     fun updateStatuses(urls: List<String>, statusList: MutableMap<String, ServerStatus>) {

@@ -6,3 +6,15 @@ logs/
 *.ipr
 *.iws
 *.idea
+
+/.kotlin-js-store
+
+# files being created during local server runs
+/static
+/data/log
+/data/databases
+/data/static/app
+/database
+
+# local configuration files
+deploy_docker.conf

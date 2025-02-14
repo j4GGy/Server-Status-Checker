@@ -1,7 +1,7 @@
-package com.twapps.serverstatuschecker
+package com.twapps.serverstatuschecker.util
 
-import com.twapps.serverstatuschecker.Failable.Failure.Companion.toFailure
-import com.twapps.serverstatuschecker.Failable.Success.Companion.toSuccess
+import com.twapps.serverstatuschecker.util.Failable.Failure.Companion.toFailure
+import com.twapps.serverstatuschecker.util.Failable.Success.Companion.toSuccess
 import kotlinx.serialization.Serializable
 
 @Serializable

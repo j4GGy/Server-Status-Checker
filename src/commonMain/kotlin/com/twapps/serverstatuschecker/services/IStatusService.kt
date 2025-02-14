@@ -1,4 +1,4 @@
-package com.twapps.serverstatuschecker
+package com.twapps.serverstatuschecker.services
 
 import io.kvision.annotations.KVService
 import kotlinx.serialization.Serializable

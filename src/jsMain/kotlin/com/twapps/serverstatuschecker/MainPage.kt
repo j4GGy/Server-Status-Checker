@@ -1,11 +1,11 @@
 package com.twapps.serverstatuschecker
 
-import com.twapps.serverstatuschecker.Failable.Success.Companion.toSuccess
+import com.twapps.serverstatuschecker.util.Failable.Success.Companion.toSuccess
+import com.twapps.serverstatuschecker.services.Response
+import com.twapps.serverstatuschecker.services.ServerStatus
+import com.twapps.serverstatuschecker.util.Failable
 import io.kvision.core.AlignItems
-import io.kvision.core.Background
-import io.kvision.core.Color
 import io.kvision.core.Container
-import io.kvision.core.JustifyItems
 import io.kvision.core.onClick
 import io.kvision.form.check.CheckBox
 import io.kvision.form.formPanel
@@ -13,9 +13,6 @@ import io.kvision.form.text.TextArea
 import io.kvision.html.b
 import io.kvision.html.button
 import io.kvision.html.div
-import io.kvision.html.h3
-import io.kvision.html.h4
-import io.kvision.html.h5
 import io.kvision.html.icon
 import io.kvision.html.span
 import io.kvision.html.table
@@ -30,7 +27,6 @@ import io.kvision.state.bind
 import io.kvision.state.sub
 import io.kvision.toast.Toast
 import io.kvision.utils.auto
-import io.kvision.utils.perc
 import io.kvision.utils.px
 import kotlinx.browser.window
 import kotlinx.coroutines.delay

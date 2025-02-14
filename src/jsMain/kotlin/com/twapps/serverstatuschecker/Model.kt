@@ -1,5 +1,9 @@
 package com.twapps.serverstatuschecker
 
+import com.twapps.serverstatuschecker.services.IStatusService
+import com.twapps.serverstatuschecker.services.ServerStatus
+import com.twapps.serverstatuschecker.util.Failable
+import com.twapps.serverstatuschecker.util.tryOrFailSuspend
 import io.kvision.remote.getService
 
 object Model {

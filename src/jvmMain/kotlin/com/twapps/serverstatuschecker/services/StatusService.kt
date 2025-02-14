@@ -1,4 +1,7 @@
-package com.twapps.serverstatuschecker
+package com.twapps.serverstatuschecker.services
+
+import com.twapps.serverstatuschecker.server.ServerState
+import com.twapps.serverstatuschecker.util.tryOrNull
 
 @Suppress("ACTUAL_WITHOUT_EXPECT")
 actual class StatusService constructor(

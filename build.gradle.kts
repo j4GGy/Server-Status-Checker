@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 plugins {
@@ -7,9 +8,11 @@ plugins {
     kotlin("multiplatform") version kotlinVersion
     val kvisionVersion: String by System.getProperties()
     id("io.kvision") version kvisionVersion
+//    val ktorVersion: String by System.getProperties()
+//    id("io.ktor.plugin") version ktorVersion
 }
 
-version = "1.0.0-SNAPSHOT"
+version = ""
 group = "com.twapps"
 
 repositories {
@@ -57,6 +60,14 @@ kotlin {
                     static = mutableListOf("${layout.buildDirectory.asFile.get()}/processedResources/js/main")
                 )
             }
+
+            // places the client .js file, index.html, css files in the servers "static" directory
+//            @OptIn(ExperimentalDistributionDsl::class)
+//            distribution {
+//                val webServerStaticDirectory = File("$projectDir/data/static/app/")
+//                outputDirectory.set(webServerStaticDirectory)
+//            }
+
             testTask {
                 useKarma {
                     useChromeHeadless()
@@ -86,6 +97,8 @@ kotlin {
                 implementation("io.ktor:ktor-server-netty:$ktorVersion")
                 implementation("io.ktor:ktor-server-auth:$ktorVersion")
                 implementation("io.ktor:ktor-server-compression:$ktorVersion")
+                implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
+                implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
             }
         }
